@@ -5,7 +5,7 @@ NBA Fantasy Tools
 
 This repository contains R scripts to scrape and present data from the
 popular NBA fantasy site
-[hashtagbasketball](https://hashtagbasketball.com/).The data is scraped
+[hashtagbasketball](https://hashtagbasketball.com/). The data is scraped
 using the [rvest](https://github.com/tidyverse/rvest) package in
 conjunction with [RSelenium](https://github.com/ropensci/RSelenium) to
 interact with the dynamic content. A
@@ -41,7 +41,7 @@ predictions](https://raw.githubusercontent.com/njwilletts/NBA_fantasy/main/scree
 
 ## Config files
 
-The configuration files are found in the /data folder.When updating the
+The configuration files are found in the /data folder. When updating the
 files it’s important to maintain the same formatting to what has been
 used previously as that is what the scripts expect.
 
