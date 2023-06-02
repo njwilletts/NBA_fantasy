@@ -8,9 +8,16 @@ library(shinyWidgets)
 library(DT)
 library(readxl)
 
+# SCRIPTS
+source(".\\src\\parameters.R")
+source(".\\src\\helper_functions.R")
+
 # INPUT DATA
-input_data <- readRDS(".\\output\\df_complete.rds") %>% relocate(points, .after = turnovers)
-source(".\\src\\concordances.R")
+roster <- espn_pull_roster(season = espn_api$season, league_id = espn_api$league_id, swid = espn_api$swid, espn_s2 = espn_api$espn_s2) # Pull roster information from espn
+input_data <- readRDS(".\\output\\df_complete.rds") %>% 
+              relocate(points, .after = turnovers) %>% 
+              left_join(roster, by = "player_name", relationship = "many-to-many") %>%
+              .[!is.na(.$name), ]
 
 # SELECTION PARAMETERS
 sum_drop <- c("num", "position", "team_code", "field_goal", "free_throw", "team_name", "schedule", "games_scheduled") # Variables to drop from summary table
@@ -29,7 +36,6 @@ format_sum <- c("Manager", "FG%", "FT%", "3PM", "REB", "AST", "STL", "BLK", "TO"
 format_matchup1 <- c("Player Name", "Games", "Missed")
 format_matchup2 <- c("Manager", "FG%", "FT%", "3PM", "REB", "AST", "STL", "BLK", "TO", "PTS", "Games")
 format_matchup3 <- c("Player Name", "FG%", "FT%", "3PM", "REB", "AST", "STL", "BLK", "TO", "PTS", "Games")
-
 
 #----------APP-------------
 
@@ -180,7 +186,7 @@ server <- function(input, output, session){
     df_combined <- rbind(df_you, df_opp)
     
     # Merge expected missed games for each player with input data
-    df_data <- left_join(input_data, df_combined, by = "player_name") %>%
+    df_data <- left_join(input_data, df_combined, by = "player_name", relationship = "many-to-many") %>%
       # Filter data down to what the user has selected
       .[.$table %in% compare_data() & .$schedule %in% compare_schedule() & .$name %in% c(compare_you(),compare_opp()),] %>%
       # Subtract the missed games off the games scheduled

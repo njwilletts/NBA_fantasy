@@ -15,3 +15,5 @@ chrome_ver <- read_excel(".\\data\\parameters.xlsx",sheet = "chrome_ver")
 # Function calls for each drop down menu 
 scrape_call <- read_excel(".\\data\\parameters.xlsx",sheet = "scrape_call")
 
+# Contains metadata to access league information from the espn api
+espn_api <- read_excel(".\\data\\parameters.xlsx",sheet = "espn_api")

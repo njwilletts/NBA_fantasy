@@ -1,21 +1,6 @@
-#--------HELPER FUNCTIONS--------
+#--------WEB SCRAPER FUNCTIONS--------
 
-# 1 - Create parameter values in the Global Environment which are unique to each script
-parameter_setup <- function(script_filter){
-  temp_url <<- url$url[url$script==script_filter]
-  temp_html <<- url$html_node[url$script==script_filter]
-  temp_start <<- url$starting_row[url$script==script_filter]
-  temp_replace <<- url$replace[url$script==script_filter]
-  temp_with <<- url$with[url$script==script_filter]
-  temp_remove <<- remove$remove[remove$script==script_filter]
-  temp_selector <<- url$selector[url$script==script_filter]
-  temp_value <<- url$value[url$script==script_filter]
-  temp_variables <<- variables$variables[variables$script==script_filter]
-  temp_call_output <<- scrape_call$output[scrape_call$script==script_filter]
-  temp_call_dropdown <<- scrape_call$drop_down[scrape_call$script==script_filter]
-}
-
-# 2 - For scraping web pages that require interaction
+# 1 - For scraping web pages that require interaction
   # FORMALS
       # selector   = sheet language selector to use
       # value      = selector element object to click on
@@ -38,7 +23,7 @@ web_scrape <- function(selector, value, chromever, url, drop_down, html, browser
   client_server$server$stop()
 }
 
-# 3 - Clean scraped XML data
+# 2 - Clean scraped XML data
   # FORMALS
     # start     = first row which contains data to keep
     # replace   = string to replace
@@ -54,7 +39,7 @@ clean_xml <- function(x, start = FALSE, replace = FALSE, with = FALSE, remove){
   return(clean)
 }
 
-# 4 - Create a list containing lists to store data in wider table format
+# 3 - Create a list containing lists to store data in wider table format
   # Example: input data of length 30 & 5 variables outputs a list length 5 containing 5 lists of length 6
     # FORMALS
       # x         = data vector to widen
@@ -69,7 +54,7 @@ create_list_lists <- function(x, variables){
   return(temp)
 }
 
-# 5 - Write observations from a vector into an empty list
+# 4 - Write observations from a vector into an empty list
   # FORMALS
     # x           = data vector to write to empty list 
     # empty_shell = empty list
@@ -88,7 +73,7 @@ write_obs <- function(x, empty_shell){
   return(empty_shell)
 }
 
-# 6 - Convert list of lists to a list of numeric or character vectors
+# 5 - Convert list of lists to a list of numeric or character vectors
   # character is the default if numeric isn't possible
   # FORMALS
     # x = list containing lists to convert to atomic vectors
@@ -106,23 +91,23 @@ convert_to_atomic_vector <- function(x){
 
 #--------MASTER FUNCTION---------
 
-# 7 - Master function to scrape data, clean, and format using helper functions above
+# 6 - Master function to scrape data, clean, and format using helper functions above
   # FORMALS - check helper functions above for descriptions
-    # selector  = #2 web_scrape
-    # value     = #2 Web_scrape
-    # chromever = #2 web_scrape
-    # drop_down = #2 web_scrape
-    # url       = #2 web_scrape
-    # html      = #2 web_scrape
-    # start     = #3 clean_xml
-    # replace   = #3 clean_xml
-    # with      = #3 clean_xml
-    # remove    = #3 clean_xml
-    # variables = #4 create_list_lists
+    # selector  = #1 web_scrape
+    # value     = #1 Web_scrape
+    # chromever = #1 web_scrape
+    # drop_down = #1 web_scrape
+    # url       = #1 web_scrape
+    # html      = #1 web_scrape
+    # start     = #2 clean_xml
+    # replace   = #2 clean_xml
+    # with      = #2 clean_xml
+    # remove    = #2 clean_xml
+    # variables = #3 create_list_lists
 
 scrape_clean_format <- function(selector, value, chromever = "latest", drop_down, url, html, start, replace, with, remove, variables){
   
-  # Helper function 2
+  # Function 1
   # Scrape data from webpage
   html_extract <- web_scrape(selector = selector,
                              value = value, 
@@ -131,7 +116,7 @@ scrape_clean_format <- function(selector, value, chromever = "latest", drop_down
                              url = url, 
                              html = html)
   
-  # Helper function 3
+  # Function 2
   # Clean the scraped XML data
   clean <- clean_xml(x = html_extract, 
                      start = start, 
@@ -139,15 +124,15 @@ scrape_clean_format <- function(selector, value, chromever = "latest", drop_down
                      with = with, 
                      remove = remove)
   
-  # Helper function 4
+  # Function 3
   # Create empty list of lists to store data by variable
   empty <- create_list_lists(x = clean, variables = variables)
   
-  # Helper function 5
+  # Function 4
   # Widen clean data by writing observations to list variables
   full <- write_obs(x = clean, empty_shell = empty)
   
-  # Helper function 6
+  # Function 5
   # Convert list variables to numeric or character
   final <- convert_to_atomic_vector(x = full)
   

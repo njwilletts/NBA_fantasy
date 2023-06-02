@@ -1,7 +1,8 @@
 # Setup libraries, parameters, and helper functions
 source(".\\src\\libraries.R")
 source(".\\src\\parameters.R")
-source(".\\src\\functions.R")
+source(".\\src\\helper_functions.R")
+source(".\\src\\web_scraper.R")
 
 # Create parameter values unique to this script from config file
 parameter_setup(script_filter = "hashtag_data")
