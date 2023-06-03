@@ -10,6 +10,7 @@ library(readxl)
 
 # SCRIPTS
 source(".\\src\\parameters.R")
+source(".\\src\\concordances.R")
 source(".\\src\\helper_functions.R")
 
 # INPUT DATA
@@ -18,6 +19,7 @@ input_data <- readRDS(".\\output\\df_complete.rds") %>%
               relocate(points, .after = turnovers) %>% 
               left_join(roster, by = "player_name", relationship = "many-to-many") %>%
               .[!is.na(.$name), ]
+input_data$name <- trimws(input_data$name, which = "both")              
 
 # SELECTION PARAMETERS
 sum_drop <- c("num", "position", "team_code", "field_goal", "free_throw", "team_name", "schedule", "games_scheduled") # Variables to drop from summary table
@@ -25,7 +27,7 @@ compare_drop <- c("field_goal_attempt", "field_goal_made", "free_throw_attempt",
 lineup_drop <- c("num", "position", "team_code", "field_goal_attempt", "field_goal_made", "free_throw_attempt", "free_throw_made", "team_name") # Variables to drop from lineup selection
 data_from <- data_names$table %>% setNames(data_names$name) # Display name of each table of data
 schedule_from <- schedule_names$schedule %>% setNames(schedule_names$name) #Display name of schedule data
-name_from <- input_data %>% select("name") %>% unique() # Name of each fantasy manager
+name_from <- input_data %>% select("name") %>% unique() %>% .[!is.na(.$name), ] # Name of each fantasy manager
 scale_vars <- c("threes", "points", "rebounds", "assists", "steals", "blocks", "turnovers", 
                 "field_goal_made", "field_goal_attempt", "free_throw_made", "free_throw_attempt") # Variables to scale by the number of games played in the selected week
 date_lookup <- as.double(difftime(Sys.Date(), "2022-10-11", units = "days")) %/% 7 # Check the current NBA week to use as the default schedule selection
@@ -57,8 +59,8 @@ ui <- fluidPage(theme = shinytheme("sandstone"), useShinydashboard(),
           column(3, offset = 1, selectInput("schedule1", "Schedule", schedule_from, selected = schedule_from[date_lookup]))
         ),
         fluidRow(
-          column(3, selectInput("manager1", "You", name_from, selected = "Nick")),
-          column(3, offset = 1, selectInput("manager2", "Opponent", name_from))
+          column(3, selectInput("manager1", "You", name_from$name, selected = "Taco Tuesday")),
+          column(3, offset = 1, selectInput("manager2", "Opponent", name_from$name))
         ),
         fluidRow(
           column(3, DT::dataTableOutput("you_missing")),
