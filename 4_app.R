@@ -156,8 +156,6 @@ server <- function(input, output, session){
     
   # Render heatmap of z-scores
   output$z_score <- renderPlot({
-    sum_clean$turnovers <- -1 * sum_clean$turnovers
-    
     plot_data <- sum_clean %>%
       .[.$table %in% sum_data(),] %>%
       select(!c("table")) %>%
