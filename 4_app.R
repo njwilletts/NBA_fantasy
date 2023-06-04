@@ -7,6 +7,7 @@ library(shinythemes)
 library(shinyWidgets)
 library(DT)
 library(readxl)
+library(ggplot2)
 
 # SCRIPTS
 source(".\\src\\parameters.R")
@@ -26,7 +27,7 @@ sum_drop <- c("num", "position", "team_code", "field_goal", "free_throw", "team_
 compare_drop <- c("field_goal_attempt", "field_goal_made", "free_throw_attempt", "free_throw_made") # Variables to drop from comparison table
 lineup_drop <- c("num", "position", "team_code", "field_goal_attempt", "field_goal_made", "free_throw_attempt", "free_throw_made", "team_name") # Variables to drop from lineup selection
 data_from <- data_names$table %>% setNames(data_names$name) # Display name of each table of data
-schedule_from <- schedule_names$schedule %>% setNames(schedule_names$name) #Display name of schedule data
+schedule_from <- schedule_names$schedule %>% setNames(schedule_names$name) # Display name of schedule data
 name_from <- input_data %>% select("name") %>% unique() %>% .[!is.na(.$name), ] # Name of each fantasy manager
 scale_vars <- c("threes", "points", "rebounds", "assists", "steals", "blocks", "turnovers", 
                 "field_goal_made", "field_goal_attempt", "free_throw_made", "free_throw_attempt") # Variables to scale by the number of games played in the selected week
@@ -34,6 +35,7 @@ date_lookup <- as.double(difftime(Sys.Date(), "2022-10-11", units = "days")) %/%
 
 # FORMAT OUTPUT
 format_sum <- c("Manager", "FG%", "FT%", "3PM", "REB", "AST", "STL", "BLK", "TO", "PTS") # Names to display for variables in summary table
+nine_cat <- c("FG%", "FT%", "3PM", "REB", "AST", "STL", "BLK", "TO", "PTS") # 9-cat fantasy variables
 # Names to display for variables in match up tables
 format_matchup1 <- c("Player Name", "Games", "Missed")
 format_matchup2 <- c("Manager", "FG%", "FT%", "3PM", "REB", "AST", "STL", "BLK", "TO", "PTS", "Games")
@@ -44,13 +46,16 @@ format_matchup3 <- c("Player Name", "FG%", "FT%", "3PM", "REB", "AST", "STL", "B
 # USER INTERFACE
 ui <- fluidPage(theme = shinytheme("sandstone"), useShinydashboard(),
   column(1),
-  column(10,
+  column(10, 
     titlePanel("NBA Fantasy Tools"),
     tabsetPanel(id = "tabset",
       tabPanel("Summary", id = "panel_1",
-        h3("Per game averages by manager"),
+        headerPanel(""),
         selectInput("table1", "Data", data_from),
-        DT::dataTableOutput("sum_table")
+        h3("Per game averages by manager"),
+        DT::dataTableOutput("sum_table"),
+        headerPanel(""),        
+        plotOutput("z_score", height = "600px")
       ),
       tabPanel("Matchup comparison", id = "panel_2",
         h3("Weekly matchup comparison"),
@@ -115,7 +120,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"), useShinydashboard(),
 # SERVER
 server <- function(input, output, session){
   
-  # TAB ONE SUMMARY TABLE
+  # TAB 1 SUMMARY TABLE
   
   # Combine player stats to calculate average per game stats by manager 
   sum_clean <- input_data %>% select(!all_of(sum_drop)) %>%
@@ -147,8 +152,37 @@ server <- function(input, output, session){
     {sum_clean %>% 
       .[.$table %in% sum_data(),] %>%
       select(!c("table"))
-    }
-  )
+    })
+    
+  # Render heatmap of z-scores
+  output$z_score <- renderPlot({
+    sum_clean$turnovers <- -1 * sum_clean$turnovers
+    
+    plot_data <- sum_clean %>%
+      .[.$table %in% sum_data(),] %>%
+      select(!c("table")) %>%
+      setNames(format_sum) %>%
+      mutate(TO = -1 * TO) %>%
+      mutate_at(nine_cat, z_score) %>%
+      pivot_longer(cols = all_of(nine_cat), names_to = "var")
+    
+    ggplot(plot_data, aes(x = factor(var, levels = unique(var)), y = Manager, fill = value)) +
+      ggtitle("Z-score heatmap") +
+      geom_tile(color = "black",
+                lwd = 1,
+                linetype = 1) +
+      scale_fill_gradient(low = "white", high ="red", name = "z-score") +
+      geom_text(aes(label = round(value, 2)), color = "black", size = 4) +
+      theme(plot.title = element_text(size=16, face="bold"),
+            axis.title.x= element_blank(),
+            axis.title.y= element_blank(),
+            axis.text.x= element_text(size=14, face="bold"),
+            axis.text.y= element_text(size=14, face="bold"),
+            legend.title = element_text(size=14, face="bold"),
+            legend.text = element_text(size=12, face="bold")
+            ) +
+      coord_fixed()
+  })
   
   # TAB 2 MATCHUP COMPARISON
     # NOTE: this page is only updated when the compare action button is clicked or when the tab is opened
