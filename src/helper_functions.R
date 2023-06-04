@@ -53,3 +53,11 @@ espn_pull_roster <- function(season, league_id, swid, espn_s2){
   manager_roster <- left_join(roster, team_names, by = "id") %>% select(!(id))
   return(manager_roster)
 }
+
+# 3 – Calculate the z score of x
+  # FORMALS
+    # x = input data
+z_score <- function(x){
+  zs <- (x - mean(x, na.rm=TRUE))/sd(x, na.rm=TRUE)
+  return(zs)
+}
