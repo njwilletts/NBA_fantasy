@@ -15,7 +15,7 @@ parameter_setup <- function(script_filter){
   temp_call_dropdown <<- scrape_call$drop_down[scrape_call$script==script_filter]
 }
 
-# 2 – Produce a list of each managers roster from the ESPN api
+# 2 – Produce a list of each managers roster from the espn api
   # FORMALS
     # season    = fantasy season year
     # league_id = id of espn fantasy league
@@ -23,7 +23,7 @@ parameter_setup <- function(script_filter){
     # espn_s2   = encrypted espn log in information (found in cookies)
 
 espn_pull_roster <- function(season, league_id, swid, espn_s2){
-  # Establish object to connect to ESPN api
+  # Establish object to connect to espn api
   conn <- ffscrapr::espn_connect(season = season, league_id = league_id, swid = swid, espn_s2 = espn_s2)
   # Retrieve data dump containing team names and rosters from ESPN api
   teams <- ffscrapr::espn_getendpoint_raw(conn, "https://fantasy.espn.com/apis/v3/games/fba/seasons/2023/segments/0/leagues/44419657?view=mTeam")
@@ -49,7 +49,7 @@ espn_pull_roster <- function(season, league_id, swid, espn_s2){
   }
   roster <- roster %>% setNames(id) %>% as_tibble() %>% pivot_longer(cols = all_of(id), names_to = "id", values_to = "player_name")
   
-  # Merge team names with players on roster using ID
+  # Merge team names with players on roster using id
   manager_roster <- left_join(roster, team_names, by = "id") %>% select(!(id))
   return(manager_roster)
 }
