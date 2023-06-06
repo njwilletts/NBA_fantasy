@@ -4,17 +4,12 @@
   # FORMALS
       # selector    = sheet language selector to use
       # value       = selector element object to click on
-      # chrome_ver  = version of chrome driver
       # url         = web page to scrape data
       # drop_down   = element number of drop down box to click
       # drop_down2  = optional second element to click
       # html        = html nodes to extract data from
-      # browser     = web driver to use
     
-web_scrape <- function(selector, value, chromever, url, drop_down, drop_down2 = NA, html, browser = "chrome"){
-  client_server <- rsDriver(browser = browser, chromever = chromever, port = free_port(), verbose = FALSE)
-  driver <- client_server$client
-  driver$open()
+web_scrape <- function(selector, value, url, drop_down, drop_down2 = NA, html, driver){
   driver$navigate(url)
   Sys.sleep(1)
   if (is.na(drop_down2)) {
@@ -26,8 +21,6 @@ web_scrape <- function(selector, value, chromever, url, drop_down, drop_down2 = 
   }
   Sys.sleep(3)
   return(read_html(driver$getPageSource()[[1]]) %>% html_nodes(html))
-  driver$quit()
-  client_server$server$stop()
 }
 
 # 2 - Clean scraped XML data
@@ -103,28 +96,28 @@ convert_to_atomic_vector <- function(x){
   # FORMALS - check helper functions above for descriptions
     # selector    = #1 web_scrape
     # value       = #1 Web_scrape
-    # chromever   = #1 web_scrape
     # drop_down   = #1 web_scrape
     # drop_down2  = #1 web_scrape
     # url         = #1 web_scrape
     # html        = #1 web_scrape
+    # driver      = #1 web_scrape
     # start       = #2 clean_xml
     # replace     = #2 clean_xml
     # with        = #2 clean_xml
     # remove      = #2 clean_xml
     # variables   = #3 create_list_lists
 
-scrape_clean_format <- function(selector, value, chromever = "latest", drop_down, drop_down2, url, html, start, replace, with, remove, variables){
+scrape_clean_format <- function(selector, value, drop_down, drop_down2, url, html, driver, start, replace, with, remove, variables){
   
   # Function 1
   # Scrape data from webpage
   html_extract <- web_scrape(selector = selector,
                              value = value, 
-                             chromever = chromever, 
                              drop_down =  drop_down,
                              drop_down2 = drop_down2,
                              url = url, 
-                             html = html)
+                             html = html,
+                             driver = driver)
   
   # Function 2
   # Clean the scraped XML data

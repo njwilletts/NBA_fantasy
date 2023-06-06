@@ -10,20 +10,29 @@ parameter_setup(script_filter = "hashtag_schedule")
 # Create a list to store each scraped table of data
 temp <- vector("list", length(temp_call_output)) %>% setNames(temp_call_output)
 
+# Open RSelenium driver
+client_server <- rsDriver(browser = "chrome", chromever = chrome_ver[[1]], port = free_port(), verbose = FALSE)
+driver <- client_server$client
+driver$open()
+
 # Call the scraping function for each page and store data as a tibble inside a list
 for (i in seq_along(temp)) {
   temp[[i]] <- scrape_clean_format(selector = temp_selector[[1]], 
                                    value = temp_value[[1]], 
-                                   chromever = chrome_ver[[1]], 
                                    drop_down = temp_call_dropdown[[i]],
                                    url = temp_url[[1]], 
-                                   html = temp_html[[1]], 
+                                   html = temp_html[[1]],
+                                   driver = driver,
                                    start = temp_start[[1]],
                                    replace = temp_replace[[1]],
                                    with = temp_with[[1]],
                                    remove = temp_remove, 
                                    variables = temp_variables) %>% as_tibble(.) 
 }
+
+# Close RSelenium driver
+driver$quit()
+client_server$server$stop()
 
 # Combine schedules into one tibble
 combine_schedule <- bind_rows(temp, .id = "schedule")
