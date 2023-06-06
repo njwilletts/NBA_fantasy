@@ -16,6 +16,7 @@ for (i in seq_along(temp)) {
                                     value = temp_value[[1]], 
                                     chromever = chrome_ver[[1]], 
                                     drop_down = temp_call_dropdown[[i]], 
+                                    drop_down2 = temp_call_dropdown2[[i]],
                                     url = temp_url[[1]], 
                                     html = temp_html[[1]], 
                                     start = temp_start[[1]],
@@ -36,5 +37,5 @@ df_nba_combined <- bind_rows(temp, .id = "table") %>%
 saveRDS(df_nba_combined, file=".\\output\\df_nba_combined.RDS")
 
 # Remove config objects used only in this script
-rm(i, temp, temp_call_dropdown, temp_call_output, temp_html, temp_remove, temp_replace, 
+rm(i, temp, temp_call_dropdown, temp_call_dropdown2, temp_call_output, temp_html, temp_remove, temp_replace, 
    temp_selector, temp_start, temp_url, temp_value, temp_variables, temp_with)

@@ -2,22 +2,29 @@
 
 # 1 - For scraping web pages that require interaction
   # FORMALS
-      # selector   = sheet language selector to use
-      # value      = selector element object to click on
-      # chrome_ver = version of chrome driver
-      # url        = web page to scrape data
-      # drop_down  = element number of drop down box to click
-      # html       = html nodes to extract data from
-      # browser    = web driver to use
+      # selector    = sheet language selector to use
+      # value       = selector element object to click on
+      # chrome_ver  = version of chrome driver
+      # url         = web page to scrape data
+      # drop_down   = element number of drop down box to click
+      # drop_down2  = optional second element to click
+      # html        = html nodes to extract data from
+      # browser     = web driver to use
     
-web_scrape <- function(selector, value, chromever, url, drop_down, html, browser = "chrome"){
+web_scrape <- function(selector, value, chromever, url, drop_down, drop_down2 = NA, html, browser = "chrome"){
   client_server <- rsDriver(browser = browser, chromever = chromever, port = free_port(), verbose = FALSE)
   driver <- client_server$client
   driver$open()
   driver$navigate(url)
   Sys.sleep(1)
-  driver$findElements(using = selector, value = value)[[drop_down]]$clickElement()
-  Sys.sleep(2)
+  if (is.na(drop_down2)) {
+    driver$findElements(using = selector, value = value)[[drop_down]]$clickElement()
+  } else {
+    options <- driver$findElements(using = selector, value = value)
+    options[[drop_down]]$clickElement()
+    options[[drop_down2]]$clickElement()
+  }
+  Sys.sleep(3)
   return(read_html(driver$getPageSource()[[1]]) %>% html_nodes(html))
   driver$quit()
   client_server$server$stop()
@@ -25,10 +32,10 @@ web_scrape <- function(selector, value, chromever, url, drop_down, html, browser
 
 # 2 - Clean scraped XML data
   # FORMALS
-    # start     = first row which contains data to keep
-    # replace   = string to replace
-    # with      = what to replace the string with
-    # remove    = strings to remove
+    # start       = first row which contains data to keep
+    # replace     = string to replace
+    # with        = what to replace the string with
+    # remove      = strings to remove
 
 clean_xml <- function(x, start = FALSE, replace = FALSE, with = FALSE, remove){
   clean <- x %>% html_text2() %>% 
@@ -76,12 +83,13 @@ write_obs <- function(x, empty_shell){
 # 5 - Convert list of lists to a list of numeric or character vectors
   # character is the default if numeric isn't possible
   # FORMALS
-    # x = list containing lists to convert to atomic vectors
+    # x           = list containing lists to convert to atomic vectors
 
 convert_to_atomic_vector <- function(x){
   for (i in seq_along(x)){
-    if (suppressWarnings(all(!is.na(as.numeric(x[[i]]))))) {
-      x[[i]] <- as.numeric(unlist(x[[i]]))
+    num_test <- suppressWarnings(as.numeric(gsub(" ", "", x[[i]]))) # Remove white space as it is interpreted as a character
+    if (all(!is.na(num_test))) {
+      x[[i]] <- as.numeric(unlist(word(x[[i]])))
     } else {
       x[[i]] <- unlist(x[[i]])
     }
@@ -93,26 +101,28 @@ convert_to_atomic_vector <- function(x){
 
 # 6 - Master function to scrape data, clean, and format using helper functions above
   # FORMALS - check helper functions above for descriptions
-    # selector  = #1 web_scrape
-    # value     = #1 Web_scrape
-    # chromever = #1 web_scrape
-    # drop_down = #1 web_scrape
-    # url       = #1 web_scrape
-    # html      = #1 web_scrape
-    # start     = #2 clean_xml
-    # replace   = #2 clean_xml
-    # with      = #2 clean_xml
-    # remove    = #2 clean_xml
-    # variables = #3 create_list_lists
+    # selector    = #1 web_scrape
+    # value       = #1 Web_scrape
+    # chromever   = #1 web_scrape
+    # drop_down   = #1 web_scrape
+    # drop_down2  = #1 web_scrape
+    # url         = #1 web_scrape
+    # html        = #1 web_scrape
+    # start       = #2 clean_xml
+    # replace     = #2 clean_xml
+    # with        = #2 clean_xml
+    # remove      = #2 clean_xml
+    # variables   = #3 create_list_lists
 
-scrape_clean_format <- function(selector, value, chromever = "latest", drop_down, url, html, start, replace, with, remove, variables){
+scrape_clean_format <- function(selector, value, chromever = "latest", drop_down, drop_down2, url, html, start, replace, with, remove, variables){
   
   # Function 1
   # Scrape data from webpage
   html_extract <- web_scrape(selector = selector,
                              value = value, 
                              chromever = chromever, 
-                             drop_down =  drop_down, 
+                             drop_down =  drop_down,
+                             drop_down2 = drop_down2,
                              url = url, 
                              html = html)
   

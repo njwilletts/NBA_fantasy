@@ -13,6 +13,7 @@ parameter_setup <- function(script_filter){
   temp_variables <<- variables$variables[variables$script==script_filter]
   temp_call_output <<- scrape_call$output[scrape_call$script==script_filter]
   temp_call_dropdown <<- scrape_call$drop_down[scrape_call$script==script_filter]
+  temp_call_dropdown2 <<- scrape_call$drop_down2[scrape_call$script==script_filter]
 }
 
 # 2 – Produce a list of each managers roster from the espn api

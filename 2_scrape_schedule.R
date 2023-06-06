@@ -15,7 +15,7 @@ for (i in seq_along(temp)) {
   temp[[i]] <- scrape_clean_format(selector = temp_selector[[1]], 
                                    value = temp_value[[1]], 
                                    chromever = chrome_ver[[1]], 
-                                   drop_down = temp_call_dropdown[[i]], 
+                                   drop_down = temp_call_dropdown[[i]],
                                    url = temp_url[[1]], 
                                    html = temp_html[[1]], 
                                    start = temp_start[[1]],
