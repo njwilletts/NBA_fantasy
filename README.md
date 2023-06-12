@@ -8,10 +8,9 @@ popular NBA fantasy site
 [hashtagbasketball](https://hashtagbasketball.com/). The data is scraped
 using the [rvest](https://github.com/tidyverse/rvest) package in
 conjunction with [RSelenium](https://github.com/ropensci/RSelenium) to
-interact with the dynamic content. A
-[shiny](https://github.com/rstudio/shiny) app is then used to present
-the data to NBA fantasy managers to assist them in winning their 9-cat
-league.
+interact with the dynamic content. The results are presented by an
+[Rshiny](https://github.com/rstudio/shiny) to assist NBA fantasy
+managers in winning their 9-cat league.
 
 ## Shiny application
 
@@ -77,7 +76,8 @@ duration.
 | parameters   | url            | with            | text strings to replace the strings above e.g. “”                                            |
 | parameters   | scrape_call    | script          | the script which uses these parameters e.g. hashtag_data                                     |
 | parameters   | scrape_call    | output          | the name of the tables which contain the scraped data e.g. df_nba_ros                        |
-| parameters   | scrape_call    | drop_down       | the drop down table option to select before scraping e.g. 59                                 |
+| parameters   | scrape_call    | drop_down       | the option to select before scraping e.g. 59                                                 |
+| parameters   | scrape_call    | drop_down2      | a second option to select before scraping e.g. 5                                             |
 | parameters   | espn_api       | season          | the year of the fantasy season e.g. 2023                                                     |
 | parameters   | espn_api       | league_id       | the id number in the url when accessing the espn fantasy page for your league e.g. 44419657  |
 | parameters   | espn_api       | swid            | the swid string found under the espn cookies which relates to your login details             |
