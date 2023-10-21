@@ -9,7 +9,7 @@
       # drop_down2  = optional second element to click
       # html        = html nodes to extract data from
     
-web_scrape <- function(selector, value, url, drop_down, drop_down2 = NA, html, driver){
+web_scrape <- function(selector, value, url, drop_down, drop_down2, html, driver){
   driver$navigate(url)
   Sys.sleep(1)
   if (is.na(drop_down2)) {
@@ -107,7 +107,7 @@ convert_to_atomic_vector <- function(x){
     # remove      = #2 clean_xml
     # variables   = #3 create_list_lists
 
-scrape_clean_format <- function(selector, value, drop_down, drop_down2, url, html, driver, start, replace, with, remove, variables){
+scrape_clean_format <- function(selector, value, drop_down, drop_down2 = NA, url, html, driver, start, replace, with, remove, variables){
   
   # Function 1
   # Scrape data from webpage
