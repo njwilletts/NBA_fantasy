@@ -1,4 +1,4 @@
-#--------WHELPER FUNCTIONS--------
+#--------HELPER FUNCTIONS--------
 
 # 1 - Create parameter values in the Global Environment which are unique to each script
 parameter_setup <- function(script_filter){
