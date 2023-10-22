@@ -15,7 +15,10 @@ drop <- c("games_played", "minutes_per_game", "total")
 # Merge NBA data with team codes
 data2 <- df_nba_combined %>% 
         left_join(., team_codes, by = "team_code") %>%
-        select(!all_of(drop))
+        select(!all_of(drop)) 
+
+# Remove accents from player names
+data2$player_name = stri_trans_general(str = data2$player_name, "Latin-ASCII")
 
 # Filter schedule down to the number of games played per week by each team
 schedule2 <- df_nba_schedule[ , !(names(df_nba_schedule) %in% c("day", "against"))] %>%
