@@ -35,7 +35,7 @@ clean_xml <- function(x, start = FALSE, replace = FALSE, with = FALSE, remove){
     {if (start[[1]] == FALSE) . else .[-1:-start]} %>% 
     {if (replace[[1]] == FALSE) . else str_replace_all(., replace, with)} %>% 
     str_trim(.) %>% 
-    {if (remove[[1]] == FALSE) . else .[!(. %in% remove)]}
+    {if (remove[[1]] == FALSE) . else .[!grepl(paste(remove, collapse='|'), ., ignore.case = TRUE)]}
   return(clean)
 }
 
