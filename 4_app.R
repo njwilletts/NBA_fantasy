@@ -148,7 +148,7 @@ server <- function(input, output, session){
   sum_data <- reactive(input$table1)
   
   # Output averages to data table showing the data specified by the reactive variable above
-  output$sum_table <- DT::renderDataTable(options = list(dom = "t"), rownames = FALSE, colnames = format_sum,
+  output$sum_table <- DT::renderDataTable(options = list(dom = "t", pageLength = 12), rownames = FALSE, colnames = format_sum, 
     {sum_clean %>% 
       .[.$table %in% sum_data(),] %>%
       select(!c("table"))
