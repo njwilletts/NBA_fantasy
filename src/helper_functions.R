@@ -27,8 +27,8 @@ espn_pull_roster <- function(season, league_id, swid, espn_s2){
   # Establish object to connect to espn api
   conn <- ffscrapr::espn_connect(season = season, league_id = league_id, swid = swid, espn_s2 = espn_s2)
   # Retrieve data dump containing team names and rosters from ESPN api
-  teams <- ffscrapr::espn_getendpoint_raw(conn, "https://fantasy.espn.com/apis/v3/games/fba/seasons/2023/segments/0/leagues/44419657?view=mTeam")
-  players <- ffscrapr::espn_getendpoint_raw(conn, "https://fantasy.espn.com/apis/v3/games/fba/seasons/2023/segments/0/leagues/44419657?view=mRoster")
+  teams <- ffscrapr::espn_getendpoint_raw(conn, paste0("https://fantasy.espn.com/apis/v3/games/fba/seasons/", season, "/segments/0/leagues/44419657?view=mTeam"))
+  players <- ffscrapr::espn_getendpoint_raw(conn, paste0("https://fantasy.espn.com/apis/v3/games/fba/seasons/", season, "/segments/0/leagues/44419657?view=mRoster"))
   
   # Filter team data down to id code and manager names
   id <- map(teams[["content"]][["teams"]], accessor = "id", function(x, accessor) pluck(x, accessor)) %>% as.character()
