@@ -61,6 +61,8 @@ duration.
 | concordances | data_names     | name            | the display name of each table of data e.g. Rest-of-season projection                        |
 | concordances | schedule_names | schedule        | the reference names for each weekly schedule e.g. week_1                                     |
 | concordances | schedule_names | schedule        | the display names of that weekly schedule e.g. W1: 17 Oct - 23 Oct                           |
+| concordances | player_fix     | player_name     | the player name to change e.g. OG Anunoby                                                    |
+| concordances | player_fix     | new_name        | the player name to change to e.g. O.G. Anunoby                                               |
 | parameters   | chrome_ver     | chrome_ver      | the version of Chrome WebDriver to be used by RSelenium                                      |
 | parameters   | variables      | script          | the script which uses these parameters e.g. hashtag_data                                     |
 | parameters   | variables      | variables       | the variables each script is scraping e.g. player_name                                       |
