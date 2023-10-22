@@ -1,6 +1,7 @@
 # Libraries
 library(tidyverse)
 library(readxl)
+library(stringi)
 
 # Import concordances
 source(".\\src\\concordances.R")
@@ -18,7 +19,7 @@ data2 <- df_nba_combined %>%
         select(!all_of(drop)) 
 
 # Remove accents from player names
-data2$player_name = stri_trans_general(str = data2$player_name, "Latin-ASCII")
+data2$player_name <- stri_trans_general(str = data2$player_name, id = "Latin-ASCII")
 
 # Filter schedule down to the number of games played per week by each team
 schedule2 <- df_nba_schedule[ , !(names(df_nba_schedule) %in% c("day", "against"))] %>%
