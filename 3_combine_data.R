@@ -13,10 +13,13 @@ df_nba_combined <- readRDS(".\\output\\df_nba_combined.rds")
 # Drop these variables from the data
 drop <- c("games_played", "minutes_per_game", "total")
 
-# Merge NBA data with team codes
+# Merge NBA data with team codes and player name fixes
 data2 <- df_nba_combined %>% 
         left_join(., team_codes, by = "team_code") %>%
-        select(!all_of(drop)) 
+        select(!all_of(drop)) %>% 
+        left_join(., player_fix, b = "player_name") %>%
+        mutate(., player_name = coalesce(.$new_name, .$player_name)) %>%
+        select(!"new_name")
 
 # Remove accents from player names
 data2$player_name <- stri_trans_general(str = data2$player_name, id = "Latin-ASCII")
