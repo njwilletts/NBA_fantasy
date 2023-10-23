@@ -87,25 +87,25 @@ duration.
 
 ## Common problems
 
-#Updating the ChromeDriver version for windows
+### Updating the ChromeDriver version for windows
 
-Step 1: navigate to https://googlechromelabs.github.io/chrome-for-testing/#stable
-Step 2: navigate to the url under the following section to download the zip file: Stable -> chromedriver -> win32
-Step 3: copy the zip file into: C:\Users\*insert your user*\AppData\Local\binman\binman_chromedriver\win32
-Step 4: create a folder named after the version number and extract the chromedriver exe into it (delete/ignore the other files such as licence)
-Step 5: run the following in R to check that the latest version is there: binman::list_versions("chromedriver") 
-Step 6: go into the parameters excel file and update the chrome_ver variable to the latest version
+- Step 1: navigate to https://googlechromelabs.github.io/chrome-for-testing/#stable
+- Step 2: navigate to the url under the following section to download the zip file: Stable -> chromedriver -> win32
+- Step 3: copy the zip file into: C:\Users\*insert your user*\AppData\Local\binman\binman_chromedriver\win32
+- Step 4: create a folder named after the version number and extract the chromedriver exe into it (delete/ignore the other files such as licence)
+- Step 5: run the following in R to check that the latest version is there: binman::list_versions("chromedriver") 
+- Step 6: go into the parameters excel file and update the chrome_ver variable to the latest version
 
 RSelenium will now run on that latest version.
 
-#Obtaining the league_ID, swid, and espn_2 parameter values
+### Obtaining the league_ID, swid, and espn_2 parameter values
 
-Step 1: open up Chrome
-Step 2: log into your espn fantasy league 
-Step 3: check the league number in the url as this is what you'll need for league_ID
-Step 4: right click on the page and select inspect
-Step 5: click the >> (More tabs) in the top bar and select Application
-Step 6: navigate to Storage -> Cookies -> https://fantasy.espn.com
-Step 7: find the values for SWID and espn_s2 and put them into the parameters excel file
+- Step 1: open up Chrome
+- Step 2: log into your espn fantasy league 
+- Step 3: check the league number in the url as this is what you'll need for league_ID
+- Step 4: right click on the page and select inspect
+- Step 5: click the >> (More tabs) in the top bar and select Application
+- Step 6: navigate to Storage -> Cookies -> https://fantasy.espn.com
+- Step 7: find the values for SWID and espn_s2 and put them into the parameters excel file
 
 The RShiny app will now update your league details automatically. 
